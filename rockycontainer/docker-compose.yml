@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: my-spring-app
+    ports:
+      - "8200:8300"
+    environment:
+      SERVER_PORT: 8300
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.containers.internal:5432/mydb
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
