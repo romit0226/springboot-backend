@@ -74,7 +74,6 @@ public class AWSS3Service {
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
-                .contentType("application/octet-stream")
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
