@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/aws/")
 @RequiredArgsConstructor
@@ -46,5 +48,33 @@ public class AWSController {
                     .body(("Download failed: " + e.getMessage()).getBytes());
         }
     }
+
+    @GetMapping("v1/S3/presign-upload")
+    public Map<String, String> getPresignedUploadUrl(
+            @RequestParam String bucketName,
+            @RequestParam String key
+    ) {
+        String url = awss3Service.presignUploadUrl(key, bucketName);
+        return Map.of(
+                "bucket", bucketName,
+                "key", key,
+                "uploadUrl", url
+        );
+    }
+
+    @GetMapping("v1/S3/presign-download")
+    public Map<String, String> getPresignedDownloadUrl(
+            @RequestParam String bucketName,
+            @RequestParam String key
+    ) {
+        String url = awss3Service.presignDownloadUrl(key, bucketName);
+        return Map.of(
+                "bucket", bucketName,
+                "key", key,
+                "downloadUrl", url
+        );
+    }
+
+
 
 }
