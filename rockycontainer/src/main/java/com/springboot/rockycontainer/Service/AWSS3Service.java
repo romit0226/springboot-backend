@@ -25,7 +25,7 @@ public class AWSS3Service {
     private final S3Client s3Client;
     private final S3Presigner presigner;
 
-    public String uploadFile(MultipartFile file, String bucketName){
+    public String uploadFile(MultipartFile file, String bucketName) {
 
         try {
             String key = "uploads/" + file.getOriginalFilename();
@@ -35,12 +35,9 @@ public class AWSS3Service {
                     .key(key)
                     .contentType(file.getContentType())
                     .build();
-
-            // FIX: use file.getBytes() to avoid "mark/reset" errors
             s3Client.putObject(
                     putRequest,
-                    RequestBody.fromBytes(file.getBytes())
-            );
+                    RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
             return getObjectUrl(bucketName, key);
 
@@ -59,8 +56,7 @@ public class AWSS3Service {
                     .key(key)
                     .build();
 
-            ResponseBytes<GetObjectResponse> response =
-                    s3Client.getObjectAsBytes(getObjectRequest);
+            ResponseBytes<GetObjectResponse> response = s3Client.getObjectAsBytes(getObjectRequest);
 
             return response.asByteArray();
 
@@ -106,6 +102,5 @@ public class AWSS3Service {
     private String getObjectUrl(String bucket, String key) {
         return "https://" + bucket + ".s3.amazonaws.com/" + key;
     }
-
 
 }
