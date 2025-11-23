@@ -1,6 +1,6 @@
 package com.springboot.rockycontainer.controller;
 
-import com.springboot.rockycontainer.Service.AWSS3Service;
+import com.springboot.rockycontainer.service.AWSS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

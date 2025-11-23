@@ -1,7 +1,6 @@
-package com.springboot.rockycontainer.Service;
+package com.springboot.rockycontainer.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseBytes;
@@ -10,6 +9,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.StorageClass;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
@@ -30,11 +30,7 @@ public class AWSS3Service {
         try {
             String key = "uploads/" + file.getOriginalFilename();
 
-            PutObjectRequest putRequest = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .contentType(file.getContentType())
-                    .build();
+            PutObjectRequest putRequest = putFilesBasedOnStorageClass(file,StorageClass.STANDARD,key,bucketName);
             s3Client.putObject(
                     putRequest,
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
@@ -46,6 +42,18 @@ public class AWSS3Service {
             throw new RuntimeException("Failed to upload file", ex);
         }
 
+    }
+
+
+
+    public PutObjectRequest putFilesBasedOnStorageClass(MultipartFile file, StorageClass storageClass,
+                                                        String key,String bucketName){
+       return PutObjectRequest.builder()
+                .bucket(bucketName)
+                .storageClass(storageClass)
+                .key(key)
+                .contentType(file.getContentType())
+                .build();
     }
 
     public byte[] downloadFile(String key, String bucketName) {
